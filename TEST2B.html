@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LAB1</title>
+    <meta charset="UTF-8" />
+    <meta name="description" content="RESTAURANT BOOKING SYSTEM" />
+    <meta name="author" content="Niraj Bhandari" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="keywords" content="HTML,Javascript,CSS" />
+
+    <!-- Simple styles for error highlighting and layout -->
+    <style>
+        .error {
+            background-color: #ffd6d6; /* This one is red tint for input errors */
+        }
+        .valid {
+            background-color: white; /* This one is white background for valid inputs */
+        }
+        #message {
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .container {
+            width: 400px;
+            padding: 15px;
+            border: 1px solid #000;
+            font-family: Arial, sans-serif;
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="tel"] {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Booking place for your dinner!</h2>
+
+    <!-- It let input for guest's name -->
+    <label for="name">Name:</label><br>
+    <input type="text" id="name"><br>
+
+    <!-- It let input for guest's phone number -->
+    <label for="phone">Phone number:</label><br>
+    <input type="text" id="phone"><br>
+
+    <!-- Let the user choose their preferred time -->
+    <label>Select a time</label><br>
+    <input type="radio" name="time" value="05:00" checked> 05:00<br>
+    <input type="radio" name="time" value="06:00"> 06:00<br>
+    <input type="radio" name="time" value="07:00"> 07:00<br>
+    <input type="radio" name="time" value="08:00"> 08:00<br><br>
+
+    <!-- This one is for optional food choices -->
+    <label>What would you like to have with us?</label><br>
+    <input type="checkbox" value="Starters"> Starters<br>
+    <input type="checkbox" value="Main_Course"> Main_Course<br>
+    <input type="checkbox" value="Desserts"> Desserts<br>
+    <input type="checkbox" value="Drinks"> Drinks<br><br>
+
+    
+    <button onclick="submitForm()">Submit</button>
+    <!-- It's  area to display success or error messages -->
+    <div id="message"></div>
+</div>
+
+<script>
+    // Get the form input elements and message display area
+    const nameInput = document.getElementById("name");
+    const phoneInput = document.getElementById("phone");
+    const messageDiv = document.getElementById("message");
+
+    // It adds validation to trigger when the user clicks away from the input
+    nameInput.addEventListener("blur", validateName);
+    phoneInput.addEventListener("blur", validatePhone);
+
+    // This is the function to check if the name is valid
+    function validateName() {
+        const name = nameInput.value.trim();
+
+        // If the name field is empty
+        if (name === "") {
+            nameInput.classList.add("error");
+            nameInput.classList.remove("valid");
+            messageDiv.textContent = "Error: Name is empty.";
+            return false;
+        }
+
+        // Check if the name has at least first and last name
+        const parts = name.split(" ").filter(p => p);
+        if (parts.length < 2) {
+            nameInput.classList.add("error");
+            nameInput.classList.remove("valid");
+            messageDiv.textContent = "Error: First and last names are required.";
+            return false;
+        }
+
+        // If name is fine, show it's valid
+        nameInput.classList.remove("error");
+        nameInput.classList.add("valid");
+        messageDiv.textContent = "";
+        return true;
+    }
+
+    // Function to check if the phone number is valid
+    function validatePhone() {
+        const phone = phoneInput.value.trim();
+
+        // If the phone field is empty
+        if (phone === "") {
+            phoneInput.classList.add("error");
+            phoneInput.classList.remove("valid");
+            messageDiv.textContent = "Error: Phone number is empty.";
+            return false;
+        }
+
+        // Phone number must be exactly 6 digits long
+        if (phone.length !== 6) {
+            phoneInput.classList.add("error");
+            phoneInput.classList.remove("valid");
+            messageDiv.textContent = "Error: Phone number must have exactly 6 characters.";
+            return false;
+        }
+
+        // Make sure phone number starts with a digit
+        if (!/^[0-9]/.test(phone)) {
+            phoneInput.classList.add("error");
+            phoneInput.classList.remove("valid");
+            messageDiv.textContent = "Error: Phone number must start with numbers.";
+            return false;
+        }
+
+        // If phone is good, mark it valid
+        phoneInput.classList.remove("error");
+        phoneInput.classList.add("valid");
+        messageDiv.textContent = "";
+        return true;
+    }
+
+    // Final step - when the form is submitted
+    function submitForm() {
+        const isNameValid = validateName();
+        const isPhoneValid = validatePhone();
+
+        // If either name or phone is invalid, stop here
+        if (!isNameValid || !isPhoneValid) {
+            return;
+        }
+
+        // If everything is okay, collect the data
+        const name = nameInput.value.trim();
+        const phone = phoneInput.value.trim();
+        const time = document.querySelector('input[name="time"]:checked').value;
+        const selectedItems = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+                                   .map(cb => cb.value)
+                                   .join(" ");
+
+        // Display a confirmation message
+        const output = `Reservation for: ${name} Phone: (${phone}) at ${time} Starters are: ${selectedItems}`;
+        messageDiv.style.color = "black";
+        messageDiv.textContent = output;
+    }
+</script>
+
+</body>
+</html>
